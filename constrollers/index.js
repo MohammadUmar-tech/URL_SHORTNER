@@ -1,7 +1,7 @@
 const express = require("express");
 const { URL } = require("../models/schema");
 const shortid = require("shortid");
-
+const PORT=require('../PORT')
 const handleCreationOfURLSHORTNER = async (req, res) => {
   const body = req.body;
   if (!body.url)
@@ -10,14 +10,21 @@ const handleCreationOfURLSHORTNER = async (req, res) => {
       .json({ msg: "Invalid Requirest Please provide valid credentials" });
 
   const shortId = shortid.generate();
-
+  const refrence=body.url
+  const already=await URL.findOne({redirectUrl:refrence})
+  if(already){
+    return res.status(400).send({mgs:"This URLalready Exist"})
+  }
   const result = await URL.create({
     shortId: shortId,
     redirectUrl: body.url,
     visitHistory: [],
   });
   if (result) {
-    return res.status(200).json({ msg: `success shortid is: ${shortId}` });
+    return res.render('home',{
+      port:PORT,
+      id:result.shortId
+    });
   }
   return res.status(500).json({ msg: "internal server Error" });
 };
@@ -37,21 +44,7 @@ const hanleGetShortedURL = async (req, res) => {
 };
 
 const handleGetAnalytics=async(req,res)=>{
-
-const shortId=req.params.shortId
-const result=await URL.findOne({shortId})
-if(result){
-    return res.status(200).json({totalClicks:result.visitHistory.length,
-        analytics:result.visitHistory
-    })
 }
-else{
-    return res.status(404).json({msg:"URL not found"})
-}
-
-}
-
-
 
 module.exports = {
   handleCreationOfURLSHORTNER,

@@ -7,6 +7,7 @@ const urlShortnerSchema=new mongoose.Schema({
     },
     redirectUrl:{
         type:String,
+        unique:true,
         required:true
     },
    visitHistory: [

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+body{
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>All URL are Given Below in Tablular form</h1>
+
+    <div>
+        <% if (locals.result) { %>
+         
+          <table>
+        <thead>
+                <th>S_NO.</th>
+                <th>shortId.</th>
+                <th>RedirectUrl.</th>
+                <th>TotalClicks.</th>
+        </thead>
+        <tbody>
+            <% result.forEach((url,index) => { %>
+                <tr>
+                <td><%= index+1 %></td>
+                <td><%= url.shortId %></td>
+                <td><%= url.redirectUrl %></td>
+                <td><%= url.visitHistory.length %></td>
+                </tr>
+            <% }) %>
+            
+        </tbody>
+        </table>
+        <% } %>
+    </div>
+</body>
+</html>
