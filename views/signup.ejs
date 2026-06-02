@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SHRTNR — Initialize Access</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #111118;
+      --border: #1e1e2e;
+      --accent: #00e5ff;
+      --accent2: #ff3cac;
+      --text: #e8e8f0;
+      --muted: #5a5a7a;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Animated grid background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,229,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,229,255,0.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+      animation: gridPan 30s linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes gridPan {
+      from { transform: translateY(0); }
+      to   { transform: translateY(48px); }
+    }
+
+    /* Glow blobs */
+    .blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: 0.15;
+      pointer-events: none;
+      animation: blobFloat 12s ease-in-out infinite alternate;
+    }
+    .blob-1 { width: 500px; height: 500px; background: var(--accent); top: -150px; left: -150px; }
+    .blob-2 { width: 400px; height: 400px; background: var(--accent2); bottom: -100px; right: -100px; animation-delay: -6s; }
+
+    @keyframes blobFloat {
+      from { transform: scale(1) translate(0, 0); }
+      to   { transform: scale(1.1) translate(30px, 20px); }
+    }
+
+    /* Card */
+    .card {
+      position: relative;
+      z-index: 10;
+      width: min(480px, 92vw);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      padding: 3rem 2.8rem;
+      animation: cardIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    }
+
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Top accent bar */
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+    }
+
+    .logo {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 0.6rem;
+      opacity: 0.8;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.5rem;
+    }
+
+    h1 span {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin-bottom: 2.5rem;
+      font-family: 'Space Mono', monospace;
+    }
+
+    /* Form Styles */
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    label {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .input-group:focus-within label {
+      color: var(--accent);
+    }
+
+    input {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      padding: 1rem;
+      color: var(--text);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.85rem;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    input:focus {
+      background: rgba(0, 229, 255, 0.03);
+      border-color: var(--accent);
+      box-shadow: 0 0 15px rgba(0, 229, 255, 0.1);
+    }
+
+    input::placeholder {
+      color: var(--muted);
+      opacity: 0.5;
+    }
+
+    button {
+      background: var(--accent);
+      color: var(--bg);
+      border: none;
+      padding: 1.1rem;
+      margin-top: 1rem;
+      font-family: 'Syne', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      border-radius: 2px;
+    }
+
+    button:hover { background: #33ecff; }
+    button:active { transform: scale(0.98); }
+
+    /* Nav link */
+    .nav-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 1.8rem;
+      color: var(--muted);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      text-decoration: none;
+      letter-spacing: 0.05em;
+      transition: color 0.2s;
+    }
+    
+    .nav-link:hover { color: var(--accent); }
+    .nav-link::before { content: '←'; }
+  </style>
+</head>
+<body>
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  
+  <div class="card">
+    <div class="logo">shrtnr.io</div>
+    <h1>Initialize<br><span>Sequence.</span></h1>
+    <p class="subtitle">// register credentials to establish link</p>
+
+    <form action="/user/signUp" method="POST">
+      <div class="input-group">
+        <label for="name">Designation [Name]</label>
+        <input type="text" id="name" name="name" placeholder="John Doe" autocomplete="off" required>
+      </div>
+      
+      <div class="input-group">
+        <label for="email">Commlink [Email]</label>
+        <input type="email" id="email" name="email" placeholder="john@example.com" autocomplete="off" required>
+      </div>
+      
+      <div class="input-group">
+        <label for="password">Passcode [Password]</label>
+        <input type="password" id="password" name="password" placeholder="••••••••" required>
+      </div>
+      
+      <button type="submit">Establish Link ↗</button>
+    </form>
+
+    <a href="/login" class="nav-link">Authenticate existing account</a>
+  </div>
+</body>
+</html>

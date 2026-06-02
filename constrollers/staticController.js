@@ -23,8 +23,11 @@ const handleAllRouteInfromtion=async(req,res)=>{
 
 }
 
+const HandlesingUpPage=async (req,res)=>{
+    res.render('signup')
+}
+const HanleLoginPage=async (req,res)=>{
+    res.render('login')
+}
 
-
-
-
-module.exports={hadndlehomepageURLGenerator,handleAllRouteInfromtion}
+module.exports={hadndlehomepageURLGenerator,handleAllRouteInfromtion,HandlesingUpPage,HanleLoginPage}

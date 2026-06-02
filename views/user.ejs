@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SHRTNR — URL Shortener</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #111118;
+      --border: #1e1e2e;
+      --accent: #00e5ff;
+      --accent2: #ff3cac;
+      --text: #e8e8f0;
+      --muted: #5a5a7a;
+      --success-bg: #001a1f;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Animated grid background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,229,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,229,255,0.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+      animation: gridPan 30s linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes gridPan {
+      from { transform: translateY(0); }
+      to   { transform: translateY(48px); }
+    }
+
+    /* Glow blobs */
+    .blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: 0.15;
+      pointer-events: none;
+      animation: blobFloat 12s ease-in-out infinite alternate;
+    }
+    .blob-1 { width: 500px; height: 500px; background: var(--accent); top: -150px; left: -150px; }
+    .blob-2 { width: 400px; height: 400px; background: var(--accent2); bottom: -100px; right: -100px; animation-delay: -6s; }
+
+    @keyframes blobFloat {
+      from { transform: scale(1) translate(0, 0); }
+      to   { transform: scale(1.1) translate(30px, 20px); }
+    }
+
+    /* Card */
+    .card {
+      position: relative;
+      z-index: 10;
+      width: min(560px, 92vw);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      padding: 3rem 2.8rem;
+      animation: cardIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    }
+
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Top accent bar */
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+    }
+
+    .logo {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+      opacity: 0.8;
+      display: inline-block;
+    }
+
+    /* --- NEW USER PROFILE SECTION --- */
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding-bottom: 1.5rem;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px dashed var(--border);
+      animation: fadeSlide 0.5s ease both;
+      animation-delay: 0.2s;
+    }
+
+    .avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Space Mono', monospace;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--bg);
+      box-shadow: 0 0 15px rgba(0, 229, 255, 0.2);
+    }
+
+    .user-info {
+      flex: 1;
+    }
+
+    .greeting {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.2rem;
+    }
+
+    .username {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .user-badge {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--accent2);
+      border: 1px solid var(--accent2);
+      padding: 0.25rem 0.6rem;
+      border-radius: 2px;
+      background: rgba(255, 60, 172, 0.05);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    /* -------------------------------- */
+
+    h1 {
+      font-size: 2.6rem;
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.5rem;
+    }
+
+    h1 span {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 2.2rem;
+      font-family: 'Space Mono', monospace;
+    }
+
+    /* Success banner */
+    .result-box {
+      background: var(--success-bg);
+      border: 1px solid var(--accent);
+      border-radius: 2px;
+      padding: 1rem 1.2rem;
+      margin-bottom: 1.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      animation: fadeSlide 0.4s ease both;
+    }
+
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(-8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .result-box .tag {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      color: var(--accent);
+      background: rgba(0,229,255,0.08);
+      border: 1px solid rgba(0,229,255,0.2);
+      padding: 0.2em 0.6em;
+      border-radius: 2px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .result-box a {
+      color: var(--text);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.8rem;
+      text-decoration: none;
+      word-break: break-all;
+      transition: color 0.2s;
+    }
+    .result-box a:hover { color: var(--accent); }
+
+    /* Form */
+    .form-group {
+      display: flex;
+      gap: 0;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      transition: border-color 0.2s;
+    }
+    .form-group:focus-within { border-color: var(--accent); }
+
+    input[type="text"] {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      padding: 0.9rem 1rem;
+      color: var(--text);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.82rem;
+      min-width: 0;
+    }
+
+    input[type="text"]::placeholder { color: var(--muted); }
+
+    button {
+      background: var(--accent);
+      color: var(--bg);
+      border: none;
+      padding: 0.9rem 1.4rem;
+      font-family: 'Syne', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      white-space: nowrap;
+      border-radius: 0 1px 1px 0;
+    }
+
+    button:hover { background: #33ecff; }
+    button:active { transform: scale(0.97); }
+
+    /* Nav link */
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 1.5rem;
+      color: var(--muted);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.72rem;
+      text-decoration: none;
+      letter-spacing: 0.05em;
+      transition: color 0.2s;
+    }
+    .nav-link:hover { color: var(--accent); }
+    .nav-link::before { content: '→'; }
+  </style>
+</head>
+<body>
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  
+  <div class="card">
+    <div class="logo">shrtnr.io</div>
+
+    <!-- User Profile Header -->
+    <% if (locals.result && locals.result.name) { %>
+      <div class="user-profile">
+        <div class="avatar">
+          <!-- Grabs the first letter of the user's name for the avatar -->
+          <%= result.name.charAt(0).toUpperCase() %>
+        </div>
+        <div class="user-info">
+          <div class="greeting">System Access Granted</div>
+          <div class="username"><%= result.name %></div>
+        </div>
+        <div class="user-badge">Verified</div>
+      </div>
+    <% } %>
+
+    <h1>Shorten.<br><span>Amplify.</span></h1>
+    <p class="subtitle">// paste a long url. get a clean one.</p>
+
+    <% if (locals.id) { %>
+    <div class="result-box">
+      <span class="tag">READY</span>
+      <a href="http://localhost:<%= port %>/url/<%= id %>" target="_blank">
+        http://localhost:<%= port %>/url/<%= id %>
+      </a>
+    </div>
+    <% } %>
+
+    <form method="POST" action="/url">
+      <div class="form-group">
+        <input
+          type="text"
+          name="url"
+          placeholder="https://your-very-long-url.com/goes/here"
+          autocomplete="off"
+          spellcheck="false"
+          required
+        />
+        <button type="submit">Shrink ↗</button>
+      </div>
+    </form>
+
+    <a href="/urls" class="nav-link">View all shortened URLs</a>
+  </div>
+</body>
+</html>

@@ -6,7 +6,7 @@ const urlRouter=require('./routes/route')
 const ejs=require('ejs')
 const path=require('path')
 const staticRouter=require('./routes/staticRouter')
-
+const userRouter=require('./routes/userRouts')
 
 dbConnection(url)
 const app=express();
@@ -16,12 +16,9 @@ app.set('view engine',"ejs")
 
 app.set('views', path.resolve( "./views"))
 
-
+app.use('/user',userRouter)
 app.use('/url',urlRouter)
 app.use('/',staticRouter)
-
-
-
 
 
 app.listen(PORT,()=>{
