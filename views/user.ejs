@@ -313,14 +313,24 @@
     <h1>Shorten.<br><span>Amplify.</span></h1>
     <p class="subtitle">// paste a long url. get a clean one.</p>
 
-    <% if (locals.id) { %>
-    <div class="result-box">
+<% if (locals.urls && urls.length > 0) { %>
+  <div style="margin-bottom: 1rem; color: var(--muted); font-family: 'Space Mono', monospace; font-size: 0.75rem;">
+    // Your shortened links:
+  </div>
+
+  <% urls.forEach(function(item) { %>
+    <div class="result-box" style="margin-bottom: 0.8rem;">
       <span class="tag">READY</span>
-      <a href="http://localhost:<%= port %>/url/<%= id %>" target="_blank">
-        http://localhost:<%= port %>/url/<%= id %>
+      <a href="http://localhost:<%= port %>/url/<%= item.shortId %>" target="_blank">
+        http://localhost:<%= port %>/url/<%= item.shortId %>
       </a>
+      
+      <div style="font-size: 0.65rem; color: var(--muted); margin-left: auto; font-family: 'Space Mono', monospace; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+        → <%= item.redirectURL %>
+      </div>
     </div>
-    <% } %>
+  <% }) %>
+<% } %>
 
     <form method="POST" action="/url">
       <div class="form-group">

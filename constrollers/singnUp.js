@@ -1,4 +1,8 @@
 const {User}=require('../models/signup')
+const {URL}=require('../models/schema')
+const {v4:uuidv4}=require('uuid')
+const {Session}=require('../models/session')
+const PORT=require('../PORT')
 const HandleSignUp=async (req,res)=>{
 try {
         const body=req.body
@@ -18,15 +22,29 @@ try {
     console.log(error)
 }
 }
+
 const HandleLogin=async(req,res)=>{
     const body=req.body
     const result=await User.findOne({email:body.email,password:body.password})
     if(!result) return res.render('bad',{msg:'404'})
 
-        return res.render('user',{result})
+    
+    const Token=uuidv4()
+    const result1=await Session.create({
+        sessionId:Token,
+        userId:result._id
+    })
+    // req.user=result1
+    res.cookie('sessionId', Token, {
+            httpOnly: true, 
+            secure: false,  
+            sameSite: 'lax'
+        });
+            const urls=await URL.find({createdBy:result._id})
+            return res.render('home',{urls,port:PORT})
 }
+
 module.exports={
     HandleSignUp,
     HandleLogin
 }
-

@@ -1,9 +1,9 @@
 const mongoose=require('mongoose')
+const {User}=require('./signup')
 const urlShortnerSchema=new mongoose.Schema({
     shortId:{
         type :String,
         required:true,
-        unique:true
     },
     redirectUrl:{
         type:String,
@@ -17,7 +17,11 @@ const urlShortnerSchema=new mongoose.Schema({
                 default: Date.now 
             }
         }
-    ]
+    ],
+    createdBy:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'user'
+    }
     
 },{timestamps:true})
 
