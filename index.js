@@ -8,7 +8,7 @@ const path=require('path')
 const staticRouter=require('./routes/staticRouter')
 const userRouter=require('./routes/userRouts')
 const cookieParser=require('cookie-parser')
-const {HandleLonggedInUserOnly}=require('./middlewares/auth')
+const {HandleLonggedInUserOnly,authStatus}=require('./middlewares/auth')
 dbConnection(url)
 const app=express();
 app.use(express.json())
@@ -19,7 +19,7 @@ app.set('views', path.resolve( "./views"))
 
 app.use('/user',userRouter)
 app.use('/url',HandleLonggedInUserOnly,urlRouter)
-app.use('/',staticRouter)
+app.use('/',authStatus,staticRouter)
 
 app.listen(PORT,()=>{
     console.log('Server Started!')

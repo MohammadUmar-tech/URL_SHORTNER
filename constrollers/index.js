@@ -6,7 +6,6 @@ const {Session}=require('../models/session');
 const { User } = require("../models/signup");
 
 
-
 const handleCreationOfURLSHORTNER = async (req, res) => {
   try {
     const body = req.body;
@@ -14,30 +13,20 @@ const handleCreationOfURLSHORTNER = async (req, res) => {
       return res.status(400).json({ msg: "Invalid Request. Please provide a valid URL" });
     }
 
-    if (!req.user || !req.user._id) {
+    if (!req.user) {
       return res.status(401).json({ msg: "Unauthorized. Please log in first." });
     }
 
     const shortId = shortid.generate();
-    const reference = body.url;
-    
-   
-    const already = await URL.findOne({ redirectUrl: reference });
-    if (already) {
-    
-      const urls = await URL.find({ createdBy: req.user._id });
-      return res.render('home', { urls, port: PORT });
-    }
-
 
     await URL.create({
       shortId: shortId,
       redirectUrl: body.url,
       visitHistory: [],
-      createdBy: req.user._id 
+      createdBy: req.user 
     });
 
-    const urls = await URL.find({ createdBy: req.user._id });
+    const urls = await URL.find({ createdBy: req.user });
     
     return res.render('home', { urls, port: PORT });
 
@@ -62,11 +51,9 @@ const hanleGetShortedURL = async (req, res) => {
   if (!result) return res.status(404).json({ msg: "URL not found" });
   return res.redirect(result.redirectUrl);
 };
-
 const handleGetAnalytics=async(req,res)=>{
   
 }
-
 module.exports = {
   handleCreationOfURLSHORTNER,
   hanleGetShortedURL,

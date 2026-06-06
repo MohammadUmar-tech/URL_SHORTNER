@@ -3,12 +3,13 @@ const {User}=require('./signup')
 const urlShortnerSchema=new mongoose.Schema({
     shortId:{
         type :String,
-        required:true,
+        unique:true,
+        required :true
     },
     redirectUrl:{
         type:String,
-        unique:true,
-        required:true
+        required:true,
+        
     },
    visitHistory: [
         {
