@@ -3,12 +3,17 @@ const {URL}=require('../models/schema')
 const PORT=require('../PORT.js')
 
 const hadndlehomepageURLGenerator=async (req,res)=>{
-   
     // return res.render("home")
-            const urls = await URL.find({ createdBy: req.user });
+            const urls = await URL.find({ createdBy: req.user._id});
             return res.render('home', { urls, port: PORT });
 }
+const HandleAdminRequest=async (req,res,next)=>{
 
+const urls=await URL.find({})
+return res.render('home',{urls,port:PORT})
+
+
+}
 const handleAllRouteInfromtion=async(req,res)=>{
 
  try {
@@ -28,4 +33,4 @@ const HanleLoginPage=async (req,res)=>{
     res.render('login')
 }
 
-module.exports={hadndlehomepageURLGenerator,handleAllRouteInfromtion,HandlesingUpPage,HanleLoginPage}
+module.exports={HandleAdminRequest,hadndlehomepageURLGenerator,handleAllRouteInfromtion,HandlesingUpPage,HanleLoginPage}

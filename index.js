@@ -8,7 +8,7 @@ const path=require('path')
 const staticRouter=require('./routes/staticRouter')
 const userRouter=require('./routes/userRouts')
 const cookieParser=require('cookie-parser')
-const {HandleLonggedInUserOnly,authStatus}=require('./middlewares/auth')
+const {checkForAuthenticationHeader,restrictTo}=require('./middlewares/auth')
 dbConnection(url)
 const app=express();
 app.use(express.json())
@@ -16,9 +16,10 @@ app.use(express.urlencoded({extended:false}))
 app.set('view engine',"ejs")
 app.use(cookieParser())
 app.set('views', path.resolve( "./views"))
+app.use(checkForAuthenticationHeader)
 
 app.use('/user',userRouter)
-app.use('/url',HandleLonggedInUserOnly,urlRouter)
+app.use('/url',restrictTo(["NORMAL"]),urlRouter)
 app.use('/',staticRouter)
 
 app.listen(PORT,()=>{

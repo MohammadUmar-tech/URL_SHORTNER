@@ -10,13 +10,15 @@ const { Secret }=require('../secret')
 const HandleSignUp=async (req,res)=>{
 try {
         const body=req.body
+        console.log(body)
         if(!body||!body.name||!body.email||!body.password){
             return res.status(400).send({msg:"URL not found"})
         }
         const result=await User.create({
             name:body.name,
             email:body.email,
-            password:body.password
+            password:body.password,
+            role:body.role
         })
         if(!result){
             return res.status(500).send({msg:"Internal server error while creating the user"})
@@ -46,19 +48,20 @@ const HandleLogin=async(req,res)=>{
     const payload={
         _id:result._id,
         email:result.email,
-        name:result.name
+        name:result.name,
+        role:result.role
     }
     const token=JWT.sign(payload,Secret,{expiresIn:'1h'})
-    // res.cookie('sessionId',token,{
-    //         httpOnly: true, 
-    //         secure: false,  
-    //         sameSite: 'lax'
-    // })
-    res.json({token})
+    res.cookie('sessionId',token,{
+            httpOnly: true, 
+            secure: false,  
+            sameSite: 'lax'
+    })
+    // res.json({token})
 
 
-    //  const urls=await URL.find({createdBy:result._id})
-    //  return res.render('home',{urls,port:PORT})
+     const urls=await URL.find({createdBy:result._id})
+     return res.render('home',{urls,port:PORT})
 }
 
 module.exports={

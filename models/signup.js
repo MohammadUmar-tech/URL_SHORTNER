@@ -15,8 +15,13 @@ const userSingUp=new mongoose.Schema({
     password:{
         type:String,
         required:true
+    },
+    role:{
+        type:String,
+        // required:true,
+        default:"NORMAL"    
     }
-},{timpstamps:true})
+},{timestamps:true})
 const User=mongoose.model('user',userSingUp)
 module.exports={
     User

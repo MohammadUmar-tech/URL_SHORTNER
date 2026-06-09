@@ -23,10 +23,10 @@ const handleCreationOfURLSHORTNER = async (req, res) => {
       shortId: shortId,
       redirectUrl: body.url,
       visitHistory: [],
-      createdBy: req.user 
+      createdBy: req.user._id
     });
 
-    const urls = await URL.find({ createdBy: req.user });
+    const urls = await URL.find({ createdBy: req.user._id });
     
     return res.render('home', { urls, port: PORT });
 
