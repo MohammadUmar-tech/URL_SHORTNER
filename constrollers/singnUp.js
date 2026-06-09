@@ -57,8 +57,8 @@ const HandleLogin=async(req,res)=>{
     res.json({token})
 
 
-     const urls=await URL.find({createdBy:result._id})
-     return res.render('home',{urls,port:PORT})
+    //  const urls=await URL.find({createdBy:result._id})
+    //  return res.render('home',{urls,port:PORT})
 }
 
 module.exports={

@@ -15,6 +15,7 @@ const HandleLonggedInUserOnly = async (req, res, next) => {
         // if (!sessionDoc) return res.redirect('/login');
 
         const sessionDoc=JWT.verify(token,Secret)
+        console.log("The Verifed Token ",sessionDoc)
         if (!sessionDoc) return res.redirect('/login');
 
         req.user = sessionDoc._id;
@@ -30,7 +31,10 @@ const authStatus = async (req, res, next) => {
         const authHeader = req.headers["authorization"];
         
         // If there's no auth header, respond with an error instead of breaking headers
-        if (!authHeader) return res.status(401).json({ error: "Access denied. No token provided." });
+        if (!authHeader)
+            {
+            return res.status(401).json({ error: "Access denied. No token provided." });    
+            }
 
         // 1. Properly extract the token
         const token = authHeader.split("Bearer ")[1];
@@ -39,14 +43,15 @@ const authStatus = async (req, res, next) => {
         // 2. FIXED: Verifying the extracted 'token', NOT 'userCookie'
         const sessionDoc = JWT.verify(token, Secret);
         if (!sessionDoc) return res.status(401).json({ error: "Invalid or expired token." });
-
+            console.log("The SessionDOC is ",sessionDoc)
         req.user = sessionDoc._id;
 
         // Fetch URLs created by this verified user
-        const urls = await URL.find({ createdBy: sessionDoc._id });
+        // const urls = await URL.find({ createdBy: sessionDoc._id });
         
-        // 3. FIXED: Send the response and exit safely. (No next() belongs here!)
-        return res.render('home', { urls, port: PORT });
+        // // 3. FIXED: Send the response and exit safely. (No next() belongs here!)
+        // return res.render('home', { urls, port: PORT });
+        next()
 
     } catch (error) {
         console.error("Auth status error:", error);

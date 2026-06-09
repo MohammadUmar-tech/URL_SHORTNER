@@ -19,7 +19,7 @@ app.set('views', path.resolve( "./views"))
 
 app.use('/user',userRouter)
 app.use('/url',HandleLonggedInUserOnly,urlRouter)
-app.use('/',authStatus,staticRouter)
+app.use('/',staticRouter)
 
 app.listen(PORT,()=>{
     console.log('Server Started!')
